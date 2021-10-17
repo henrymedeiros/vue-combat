@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="shortcut icon" href="assets/favicon.ico" />
+    <title>Vue Combat</title>
+    <!-- VUE CDN -->
+    <script src="https://unpkg.com/vue"></script>
+    <!-- TAILWIND CDN -->
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
+    <!-- FONTS -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins&display=swap" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    
+</head>
+
+<body>
+
+    <div id="app" class='container mx-auto h-screen'>
+        <!-- HEADER -->
+        <header class='menu flex justify-center py-5'>
+            <div class='flex flex-col h-full justify-center items-center' style='width:75%'> 
+                <div class='logo flex items-center'>
+                    <img src="assets/images/vue-logo.png" alt="" class='mr-3'>
+                    <p class='text-gray-800'>Vue-Combat</p>
+                </div>
+                <p class='text-center text-gray-600 py-2 '>Bem vindo ao Vue-Combat! No Vue-Combat você é capaz de realizar múltiplos combates e utilizar diferentes estratégias para zerar a vida do seu oponente. 
+                    Este é o meu primeiro projeto em vue.js, e nele pude exercitar as funcionalidades mais básicas do framework (renderização condicional, loops, binding, etc...)
+                </p>
+                <div class='tooltip' class=' text-gray-300 py-2'>
+                    <u> Como Jogar? </u>
+                    <span class='tooltip-text'> <strong> Como ganhar: </strong> Vence aquele que zerar a vida ou a stamina do seu oponente. <ul> <li> Ataque normal não gasta Stamina </li><li> Ataque especial e cura gastam 10 de Stamina </li> <li>Os valores de ataque/cura são gerados aleatoriamente.</li></span>
+                </div>
+               
+            </div>
+            
+        </header>
+        <!-- END HEADER -->
+        <!-- GAME SECTION -->
+        <main class='flex justify-center'>
+            <div class="content flex">
+                <div class='player-panel'>
+                
+                    <div class='player-image'>
+                        <img src="assets/images/player.png" alt="">
+                        <h1 class='text-center py-2' style="font-family: 'MedievalSharp', cursive; font-size: 1.2rem;">Jogador</h1>
+                    </div>
+                    
+                    
+                    <div class="life-bar relative my-2 ">
+                        <div class="life" :style="{width: player.health + '%'} ">
+                            <span class='absolute right-0 mr-2' >Vida: {{player.health}}</span>
+                        </div>
+                        
+                    </div>
+                    <div class="stamina-bar relative">
+                        <div class="stamina" :style="{width: player.stamina + '%'}">
+                            <span class='absolute right-0 mr-2'>Stamina: {{player.stamina}}</span>
+                        </div>
+                    </div>
+                </div>
+    
+                <div class="mid-panel px-5">
+                    <div class="flex justify-center items-center" style='height: 200px'>
+                        <h1 class='versus'>V<span class='mt-10'>S</span></h1>
+                    </div>
+                    
+                    
+                    <div ref='battleLog' class='battle-log' style='overflow: auto; max-height: 200px; font-size: 14px'>
+                        <ul>
+                            <li v-for="log in battleLog" class=' py-3 px-1 mx-4' style='border-bottom: 2px dotted #31475E ;max-height: 50%; height:50%'>      
+                                <div v-for='logInfo in log' class='text-blue-400'>
+                                    <p v-if="logInfo.action=='attack'"><span class='text-yellow-500'>{{logInfo.author}}</span> ataca <span class='text-yellow-500'>{{logInfo.enemy}}</span> e causa <span style='color:red'>{{logInfo.damage}} de dano</span></p>
+                                    <p v-else-if="logInfo.action=='sp.attack'"><span class='text-yellow-500'>{{logInfo.author}}</span> executa um ataque especial em <span class='text-yellow-500'>{{logInfo.enemy}}</span> e causa <span style='color:red'>{{logInfo.damage}} de dano </span></p>
+                                    <p v-else-if="logInfo.action=='heal'"><span class='text-yellow-500'>{{logInfo.author}}</span> recupera <span style='color: green'> {{logInfo.heal}} pontos de vida</span></p>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                
+                <div class='cpu-panel'>
+                    <div class='monster-image'>
+                        <img src="assets/images/monster.png" alt="">
+                        <h1 class='text-center py-2' style="font-family: 'MedievalSharp', cursive; font-size: 1.2rem;">Monstro</h1>
+                    </div>
+                    
+                    <div class="life-bar relative my-2">
+                        <div class="life " :style="{width: cpu.health + '%'} ">
+                            <span class='absolute ml-2'>Vida: {{cpu.health}}</span>
+                        </div>
+                        
+                    </div>
+                    <div class="stamina-bar relative">
+                        <div class="stamina" :style="{width: cpu.stamina + '%'}">
+                            <span class='absolute ml-2'>Stamina: {{cpu.stamina}}</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </main>
+        
+       <!-- END GAME SECTION -->
+        
+       <!-- SCORES SECTION -->
+        <div class='flex justify-center'>
+            <div class="scores py-3">
+                <p><strong>Placar Geral</strong></p>
+                <p>  Vitórias: {{ player.wins != undefined ? player.wins : 0}} | Derrotas: {{player.losses != undefined ? player.losses : 0}} </p>
+                <div v-if="playerWin">
+                    <p style='color:green'>Você venceu!</p>
+                </div>
+                <p v-else-if="cpuWin" style='color:red;'>Você perdeu!</p>
+            </div>
+        </div>
+
+        <!-- END SCORES SECTION -->
+
+        <!-- INTERACTABLE  -->
+        <h1 class='flex justify-center my-3'>Escolha uma das ações abaixo</h1>
+        
+        <div class="buttons-area flex justify-center mt-3" v-if='isRunning'>
+            
+            <div>
+                <button @click="playerAction('attack')">
+                    <img src="assets/icons/sword_1.png" alt="">
+                    Atk
+                </button>
+                <button @click="playerAction('sp.attack')">
+                    <img src="assets/icons/sword_2.png" alt="">
+                    Atk Esp.
+                </button>
+                <button @click="playerAction('heal')"><img src="assets/icons/heal.jpg" alt="">Cura</button>
+                <button @click="isRunning = false"><img src="assets/icons/surrender.png" alt="">Desistir</button>
+            </div>
+            
+        </div>
+        <div v-else class="flex justify-center">
+            <button  @click="startGame()"  class="py-2 px-4" style="background-color: #9C2423; color: #FEA73C; border: 2px solid #FEA73C; font-family: 'MedievalSharp', cursive;" > Iniciar Jogo </button>
+        </div>
+  
+    </div>
+    </div>
+    <footer class='py-3'>
+        <div>
+            <p class="text-center text-gray-400">©2021 Henry Medeiros</p> 
+        </div>
+    </footer>
+
+    <script>
+        new Vue({
+            el: '#app',
+            data: {
+                isRunning: false,
+                player: {
+                    health: 100,
+                    stamina: 100,
+                    wins: localStorage.getItem('wins'),
+                    losses: localStorage.getItem('losses')
+                    
+                },
+                cpu: {
+                    health: 100,
+                    stamina: 100,
+                },
+                battleLog: [],
+                winner: null
+            },
+            methods: {
+                startGame(){
+                    this.winner = null
+                    this.battleLog = []
+                    this.isRunning = true,
+                    this.player.health = 100,
+                    this.player.stamina = 100,
+                    this.cpu.health = 100,
+                    this.cpu.stamina = 100
+                },
+                getRandomArbitrary(min, max) {
+                    let value = Math.random() * (max - min) + min
+                    return Math.round(value);
+                },
+                attack(){
+                    let damage = this.getRandomArbitrary(10,5)
+                    return damage
+                },
+                specialAttack(){
+                    return this.attack() + 3
+                },
+                heal(){
+                    let healAmount = this.getRandomArbitrary(10,4)
+                    return healAmount;
+                    
+                },
+                playerAction(action){
+                    let log = {
+                        damage: 0, 
+                        stamina: 0, 
+                        heal: 0,
+                        action: action,
+                        author: 'Jogador'
+                    }
+                    if(action == 'attack' ){
+                        let attack = this.attack()
+                        this.cpu.health = Math.max(this.cpu.health - attack, 0)
+                        log.damage = attack;
+                        
+                    }
+                    else if(action == 'sp.attack' ){
+                        let specialAttack = this.specialAttack()
+                        this.cpu.health = Math.max(this.cpu.health - specialAttack, 0)
+                        this.player.stamina -= 10
+                        log.damage = specialAttack;
+                        log.stamina = 10
+
+                       
+                    }
+                    else if(action =='heal'){
+                        let heal = this.heal();
+                        /*if(this.player.health + heal >= 100){
+                            let overHeal = this.player.health + heal;
+
+                        }
+                        this.player.health += heal*/
+                        this.player.health = Math.min(this.player.health + heal, 100)
+                        this.player.stamina -= 10
+                        log.heal = heal;
+                        log.stamina = 10
+                    }
+                    let playerLog = this.getLog(log)
+                    let cpuLog = this.cpuAction(this.randomizeCpuAction())
+                    this.logRegister(playerLog, cpuLog)
+                    return log
+                    
+                },
+               
+                cpuAction(action){
+                    let log = {
+                        damage: 0, 
+                        stamina: 0, 
+                        heal: 0,
+                        action: action,
+                        author: 'Monstro'
+                    }
+                    if(action == 'attack' ){
+                        let attack = this.attack()
+                        this.player.health = Math.max(this.player.health - attack, 0)
+                        log.damage = attack;
+                    }
+                    else if(action == 'sp.attack' ){
+                        let specialAttack = this.specialAttack()
+                        this.player.health = Math.max(this.player.health - specialAttack, 0)
+                        this.cpu.stamina -= 10
+                        log.damage = specialAttack;
+                        log.stamina = 10
+
+                       
+                    }
+                    else if(action =='heal'){
+                        let heal = this.heal();
+                        this.cpu.health = Math.min(this.cpu.health + heal, 100)
+                        this.cpu.stamina -= 10
+                        log.heal = heal;
+                        log.stamina = 10
+                        
+                    }
+                    return this.getLog(log)
+                }
+                ,
+                randomizeCpuAction(){
+                   let actions = ['attack', 'sp.attack', 'heal']
+                   return actions[this.getRandomArbitrary(0,2)]
+                },
+                getLog(log){
+                    if(log.author=='Monstro'){
+                        log.enemy = 'Jogador'
+                    }
+                    else{
+                        log.enemy = 'Monstro'
+                    }
+                    
+                    return log
+                },
+                logRegister(playerLog, cpuLog){
+                    let turnLog = {
+                        playerLog: playerLog,
+                        cpuLog: cpuLog
+                    }
+                    this.battleLog.push(turnLog)
+                },
+
+            },
+            computed: {
+                playerWin(){
+                    return this.cpu.health == 0 || this.cpu.stamina==0         
+                },
+                cpuWin(){
+                    return this.player.health == 0 || this.player.stamina==0 
+                }
+            },
+            watch: {
+                playerWin(value){
+                    if (value) {this.isRunning = false; this.player.wins++; localStorage.setItem('wins', this.player.wins);}
+                },
+                cpuWin(value){
+                    if (value) {this.isRunning = false; this.player.losses++; localStorage.setItem('losses', this.player.losses);}
+                }
+            },
+            updated(){
+                this.$nextTick(()=>{
+                    let battleLog = this.$refs.battleLog
+                    battleLog.scrollTo({
+                        left: 0,
+                        top: battleLog.scrollHeight - battleLog.clientHeight
+                    })
+                })
+            }
+        })
+    </script>
+</body>
+
+
+</html>

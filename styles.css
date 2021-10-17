@@ -1,0 +1,167 @@
+*{margin:0;box-sizing:border-box;}
+body{
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    max-height: 100vh;
+}
+#app{
+    cursor: url('assets/cursor_final.png'), auto;
+}
+
+
+
+.menu{
+    width: 100%;
+}
+
+.tooltip {
+    position: relative;
+    display: inline-block;
+}
+
+.tooltip ul{
+    list-style: disc;
+    padding: 0.5rem 1rem;
+}
+  
+.tooltip .tooltip-text {
+    visibility: hidden;
+    width: 300px;
+    background-color: rgba(0,0,0,0.8);
+    color: #fff;
+    border-radius: 6px;
+    padding: 1rem;
+    top: -5px;
+    left: 105%;
+    font-size: 12px;
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+}
+
+.tooltip:hover .tooltip-text {
+visibility: visible;
+}
+
+main{
+    width:100%;
+    
+}
+
+
+
+.logo img{
+    width: 80px;
+}
+.logo p{
+    font-family: 'Poppins', sans-serif;
+    font-size: 3.5rem;
+    font-weight: 300;
+}
+
+.versus{
+    display:flex;
+    font-size: 3.5rem;
+    font-weight: 300;
+    height: 100%;
+    align-items: center;
+}
+
+
+.life-bar, .stamina-bar{
+    height:20px;
+    width: 100%;
+    background-image: linear-gradient(to right, #626262 , #3e3e3e);
+   
+}
+
+.life,.stamina{
+    height:20px;
+    width:100%;
+    color: white;
+    font-weight: 600;
+}
+
+.life{
+    background-color: #CE0101;
+}
+
+.life span, .stamina span{
+    line-height: 20px;
+    
+}
+
+.stamina{
+    background-color: #6BBE2F;
+}
+
+.cpu-panel,.player-panel{
+    width: 300px;
+    height: 400px;
+}
+
+.mid-panel{
+    width: 300px;
+    height: 430px ;
+}
+
+.battle-log{
+    font-weight: 400;
+}
+
+.battle-log strong{
+    font-weight: 400;
+}
+
+.battle-log::-webkit-scrollbar {
+    width: 7px;
+}
+ 
+.battle-log::-webkit-scrollbar-track {
+    background-color: #e4e4e4;
+    border-radius: 100px;
+}
+ 
+.battle-log::-webkit-scrollbar-thumb {
+    background-color: #3FB984;
+    border-radius: 100px;
+}
+
+.scores{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+
+.buttons-area button{
+    margin: 0 1rem;
+    width:64px;
+    height:64px;
+}
+
+.buttons-area button img{
+    width: 100%;
+    border-radius: 6px;
+}
+
+footer{
+    width: 100%;
+}
+
+button:hover{
+    cursor:  url('assets/cursor_lighter.png'), auto;	
+}
+
+.floating{    
+    animation-name: floating;
+    animation-duration: 1.25s;
+    animation-iteration-count: 1;
+    animation-timing-function: ease-in-out;
+}
+
+@keyframes floating {
+    0% { transform: translate(0,  0px); }
+    100%   { transform: translate(0, -80px);}   
+}
